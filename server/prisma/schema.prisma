@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["linux-musl", "native", "linux-musl-openssl-3.0.x", "darwin"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  email     String
+  password  String
+  firstName String?
+  lastName  String?
+  bills     Bills[]   @relation("UserToBills")
+  tokens    UserTokens[]
+}
+
+model Bills {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime? @updatedAt
+  invoiceNumber String
+  invoiceDate   String
+  totalAmount   Json
+  items         Json[]
+  vendorDetails Json?
+  notes         Json?
+  imageUrl      String
+  fk_user       Int
+  user          User     @relation("UserToBills", fields: [fk_user], references: [id])
+}
+
+
+model UserTokens{
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  token     String
+  isValid   Boolean
+  fk_user   Int
+  user      User      @relation(fields: [fk_user], references: [id])
+}
