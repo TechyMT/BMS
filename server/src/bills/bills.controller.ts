@@ -29,7 +29,8 @@ export class BillsController {
             }
             const data = await this.billsService.convertImageToText(file, fileName);
             return {
-                ...data
+                ...data,
+                statusCode: 200
             }
         }
         catch (err) {
